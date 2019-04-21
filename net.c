@@ -400,6 +400,8 @@ addrretry:
         c->fd = s;
         if (redisSetBlocking(c,0) != REDIS_OK)
             goto error;
+        if (redisSetTcpNoDelay(c) != REDIS_OK)
+            goto error;
         if (c->tcp.source_addr) {
             int bound = 0;
             /* Using getaddrinfo saves us from self-determining IPv4 vs IPv6 */
@@ -468,8 +470,6 @@ addrretry:
             }
         }
         if (blocking && redisSetBlocking(c,1) != REDIS_OK)
-            goto error;
-        if (redisSetTcpNoDelay(c) != REDIS_OK)
             goto error;
 
         c->flags |= REDIS_CONNECTED;
